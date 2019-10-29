@@ -31,7 +31,7 @@ func initializeDataBase() (*gorm.DB, error){
 	token := config.GetConnectionToken()
 
 	for {
-		if c > 5 {
+		if count > 5 {
 			return nil, fmt.Errorf("")
 		}
 		db, err = gorm.Open("mysql", token)
