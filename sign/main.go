@@ -2,6 +2,7 @@ package main
 
 import(
 	"fmt"
+	"time"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -11,12 +12,13 @@ import(
 )
 
 func main() {
+	var ctrl controller.IsController
 	db, err := initializeDataBase()
 	if err != nil {
 		// TODO: Faild connecting mysql
 	}
-	ctrl　= initializeController(db)
-	router := setupRouter(*ctrl)
+	ctrl = initializeController(db)
+	router := setupRouter(ctrl)
 	err = router.Run(":9000")
 	if err != nil {
 		// TODO: Faild launching router
@@ -26,34 +28,33 @@ func main() {
 func initializeDataBase() (*gorm.DB, error){
 	var db *gorm.DB
 	var err error
-	int count = 1
-
+	var count time.Duration
 	token := config.GetConnectionToken()
 
+	count = 1
 	for {
 		if count > 5 {
 			return nil, fmt.Errorf("")
 		}
 		db, err = gorm.Open("mysql", token)
 		if err == nil {
-			break
+			db.AutoMigrate(&model.User{})
+			return db, nil
 		}
-		else {
-			time.Sleep(2 * count * time.Second)
-		}
+		time.Sleep(2 * time.Second)
+
 		count++
 	}
 
-	db.AutoMigrate(model.User)
-	return db, nil
+	return nil, err
 }
 
-func initializeController(db *gorm.Engin) (controller.IsController){
+func initializeController(db *gorm.DB) (controller.IsController){
 	return controller.IsController{DB: db}
 }
 
-func setupRouter(ctrl controller.IsController) *gin.Engin {
-	router = gin.Default()
+func setupRouter(ctrl controller.IsController) *gin.Engine {
+	router := gin.Default()
 	router.GET("/users", ctrl.GetUsersHandler)
 	router.POST("/signin", ctrl.SigninHandler)
 	router.POST("/signup", ctrl.SignupHandler)

@@ -1,6 +1,13 @@
 const { gql } = require('apollo-server');
 
 module.exports = gql`
+  type User {
+    id:  String
+    name: String
+    email: String
+    password: String
+  }
   type Query {
+    users: [User]
   }
 `;
