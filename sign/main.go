@@ -55,7 +55,9 @@ func initializeController(db *gorm.DB) (controller.IsController){
 
 func setupRouter(ctrl controller.IsController) *gin.Engine {
 	router := gin.Default()
+	router.GET("/", ctrl.GetFunctionMap)
 	router.GET("/users", ctrl.GetUsersHandler)
+	router.GET("/user/:id", ctrl.GetUserHandler)
 	router.POST("/signin", ctrl.SigninHandler)
 	router.POST("/signup", ctrl.SignupHandler)
 	router.POST("/delete", ctrl.DeleteUserHandler)

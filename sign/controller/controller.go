@@ -11,8 +11,18 @@ type IsController struct {
 	DB	*gorm.DB
 }
 
-type userList struct {
-	users	[]model.User
+type functionMap map[string]interface {}
+
+func (ctrl *IsController)GetFunctionMap(context *gin.Context) {
+	funcMap := functionMap{
+			"/user/id": "",
+			"/users": "",
+			"/signin": "",
+			"/signup": "",
+			"/delete": "",
+	}
+	
+	context.JSON(200, gin.H{"/": funcMap})
 }
 
 func (ctrl *IsController)GetUsersHandler(context *gin.Context) {
@@ -20,6 +30,15 @@ func (ctrl *IsController)GetUsersHandler(context *gin.Context) {
 	ctrl.DB.Find(&user)
 
 	context.JSON(200, gin.H{"users": user})
+}
+
+
+func (ctrl *IsController)GetUserHandler(context *gin.Context) {
+	var	user model.User
+	id := context.Param("id")
+	ctrl.DB.Find(&user, "id=?", id)
+
+	context.JSON(200, gin.H{"user": user})
 }
 
 func (ctrl *IsController)SigninHandler(context *gin.Context) {
