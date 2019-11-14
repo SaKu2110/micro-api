@@ -1,0 +1,33 @@
+version: '3'
+services:
+        mysql:
+                image: mysql:5.7
+                ports:
+                        - 3306:3306
+                volumes:
+                        - db-data=/var/lib/mysql
+                environment:
+                        - MYSQL_ROOT_PASSWORD=rootpass
+                        - MYSQL_DATABASE=sign
+                        - MYSQL_USER=sign
+                        - MYSQL_PASSWORD=signpass
+        sign-api:
+                build: ./sign
+                ports:
+                        - 9000:9000
+                environment:
+                        - DB_USER=sign
+                        - DB_PASS=signpass
+                        - DB_IP=mysql
+                        - DB_PORT=3306
+                        - DB_NAME=sign
+                depends_on:
+                        - 'mysql'
+        bff-api:
+                build: ./bff
+                ports:
+                        - 4000:4000
+                environment:
+                        SIGN: http://sign-api:9000
+                depends_on:
+                        - 'sign-api'

@@ -7,7 +7,7 @@ const { ApolloServer } = require('apollo-server');
 class SignAPI extends RESTDataSource {
   constructor() {
     super();
-    this.baseURL = 'http://127.0.0.1:9000/';
+    this.baseURL = process.env.SIGN;
   }
 
   async getUsers() {

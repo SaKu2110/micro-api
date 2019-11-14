@@ -41,7 +41,7 @@ func initializeDataBase() (*gorm.DB, error){
 			db.AutoMigrate(&model.User{})
 			return db, nil
 		}
-		time.Sleep(2 * time.Second)
+		time.Sleep(3 * time.Second)
 
 		count++
 	}
